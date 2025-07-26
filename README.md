@@ -2,7 +2,7 @@
 
 A multilingual Retrieval-Augmented Generation (RAG) system that enables users to query Bengali documents using both Bengali and English questions. The system uses OCR for text extraction, translation for multilingual support, and vector embeddings for semantic search.
 
-![Alt text]('/images/1.png')
+![Alt text](/images/1.png)
 
 
 ## Table of Contents
