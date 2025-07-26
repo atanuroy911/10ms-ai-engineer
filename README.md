@@ -2,6 +2,9 @@
 
 A multilingual Retrieval-Augmented Generation (RAG) system that enables users to query Bengali documents using both Bengali and English questions. The system uses OCR for text extraction, translation for multilingual support, and vector embeddings for semantic search.
 
+![Alt text]('/images/1.png')
+
+
 ## Table of Contents
 
 - [Setup Guide](#setup-guide)
@@ -24,8 +27,8 @@ A multilingual Retrieval-Augmented Generation (RAG) system that enables users to
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/bengali-english-rag.git
-   cd bengali-english-rag
+   git clone https://github.com/atanuroy911/10ms-ai-engineer
+   cd 10ms-ai-engineer
    ```
 
 2. **Create virtual environment**
@@ -108,7 +111,7 @@ Question: অনুপমের বন্ধু হরিশ কোথায় 
 
 **Output:**
 ```
-Answer: হরিশ একটি ব্যাংকে কাজ করে।
+Answer: অনুপমের বন্ধু হরিশ কানপুরে কাজ করে।
 
 Translation Details:
 - Original Language: bengali
@@ -129,7 +132,8 @@ Question: বিবাহ ভাঙার পর হতে কল্যাণী
 
 **Output:**
 ```
-Answer: বিবাহ ভাঙার পর কল্যাণী ব্রহ্মচর্য ব্রত গ্রহণ করে।
+Answer: বিবাহ ভাঙার পর হতে কল্যাণী মেয়েদের শিক্ষার ব্রত গ্রহণ করে।
+
 
 Translation Details:
 - Original Language: bengali
@@ -142,7 +146,9 @@ Sources:
    Original Language: bengali
    Content Preview: After the marriage dissolution, Kalyani takes a vow of celibacy...
 ```
+![Alt text]('/images/2.png')
 
+![Alt text]('/images/3.png')
 ### English Queries
 
 **Query 1:**
@@ -152,7 +158,8 @@ Question: Where does Anupam's friend Harish work?
 
 **Output:**
 ```
-Answer: Harish works at a bank.
+Answer: Anupam's friend Harish works in Kanpur.
+
 
 Translation Details:
 - Original Language: english
@@ -172,7 +179,8 @@ Question: What is the main theme of the story?
 
 **Output:**
 ```
-Answer: The main theme revolves around social relationships, marriage customs, and the challenges faced by characters in traditional Bengali society.
+Answer: The main theme of the story appears to be the struggle against societal norms and expectations, particularly in the context of marriage and familial relationships. The character Anupam faces challenges within his family and societal expectations, but ultimately breaks free from these constraints.
+
 
 Sources:
 1. Source: Data/HSC26-Bangla1st-Paper.pdf
@@ -180,6 +188,7 @@ Sources:
    Original Language: bengali
    Content Preview: The story explores the complexities of social norms...
 ```
+
 
 ## API Documentation
 
