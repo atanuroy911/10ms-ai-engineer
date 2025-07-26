@@ -4,7 +4,23 @@ A multilingual Retrieval-Augmented Generation (RAG) system that enables users to
 
 ![Alt text](/images/1.png)
 
+### WORD FROM CREATOR:
+The method implemented here does not quite process the document well. The PDF document mentioned here has lots of artifacts and the MCQ section is albeit visually appealing is not good for processing. What needs to be done is to have a Key Value pair for all questions and answers and then create the embeddings and then store them in the database. Which is not done in this short time span. While doing this assignment I have tested with LaBSE, Sentence Transformer MiniLLM V2 and Gemini Embeddings from Langchain. However all those models were not performing well at all. It should but, I believe the data was not making sense to the model due to the complexity of the text. For example, the main text of the PDF is in Shadhu Bhasha and advanced bengali corpus is used. However, us as normal human beings do not ask questions to LLM in that manner. Another point to note is in MCQs because there is no way to actually differentiate between correct and wrong answers the similarity will obviously be thrown off course. 
 
+Proper way of data cleaning:
+{
+    question: XYZ? ,
+    answer: XYZ
+    wrong answer: [a, b, c, d];
+}
+
+If the data can be extracted in this manner then the model will be better.
+
+While extracting the data, I also faced the problem of unicode character extraction. Various kars like a-kar, e-kar, u-kar and other complex characters like ref, j-fola were being misplaced. Hence, I used OCR to extract the data. Even then, many text were not proper. The PDF was made in POWERPOINT which is improper for extraction at the moment. I found Bengali RAG in github made by someone else - they had trained their own LLM model for this purpose but still faced limitations with PDF files and only accepted TXT files. I had tried with their model but, their model is quite large for my system to run on. Time is required for a much better solution. 
+
+I am not proud of this solution. But, this is my solution at the moment.
+
+Thank you.
 ## Table of Contents
 
 - [Setup Guide](#setup-guide)
@@ -485,6 +501,8 @@ POST /api/detect_language
 3. **Context Window:** Limited by chunk size and model context length
 4. **Domain Specificity:** Optimized for literary content, may need adjustment for other domains
 5. **Resource Requirements:** Requires OpenAI API access and computational resources
+
+
 
 ### Success Metrics
 
