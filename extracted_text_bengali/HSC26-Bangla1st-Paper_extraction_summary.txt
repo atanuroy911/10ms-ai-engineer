@@ -1,0 +1,33 @@
+Text Extraction Summary
+==================================================
+Source PDF: Data/HSC26-Bangla1st-Paper.pdf
+Page Range: 6 to 20
+Total Pages in PDF: 49
+Successfully Processed: 15 pages
+DPI Setting: 400
+Extraction Date: 2025-07-26 02:39:36.017812
+Output Directory: extracted_text_bengali
+
+Successfully Processed Pages:
+------------------------------
+Page 6
+Page 7
+Page 8
+Page 9
+Page 10
+Page 11
+Page 12
+Page 13
+Page 14
+Page 15
+Page 16
+Page 17
+Page 18
+Page 19
+Page 20
+
+Files Created:
+--------------------
+- Individual page files: 15 files
+- Combined text file: HSC26-Bangla1st-Paper_combined_pages_6-20.txt
+- Summary file: HSC26-Bangla1st-Paper_extraction_summary.txt

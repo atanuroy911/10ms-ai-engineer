@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bengali-English RAG Chatbot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .chat-container {
+            height: calc(100vh - 160px);
+        }
+        
+        .bengali-font {
+            font-family: 'Noto Sans Bengali', 'SolaimanLipi', sans-serif;
+        }
+        
+        .message-bubble {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .typing-indicator {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen" x-data="chatApp()">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-4xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900">Bengali-English RAG Chatbot</h1>
+                        <p class="text-sm text-gray-500">Ask questions in Bengali or English • বাংলা বা ইংরেজিতে প্রশ্ন করুন</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <div class="flex items-center space-x-2 text-sm">
+                        <div class="flex items-center space-x-1">
+                            <div :class="systemStatus === 'healthy' ? 'bg-green-500' : 'bg-red-500'" class="w-2 h-2 rounded-full"></div>
+                            <span :class="systemStatus === 'healthy' ? 'text-green-600' : 'text-red-600'" class="font-medium" x-text="systemStatus === 'healthy' ? 'Online' : 'Offline'"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Chat Container -->
+    <div class="max-w-4xl mx-auto px-4 py-6">
+        <!-- Chat Messages -->
+        <div class="chat-container bg-white rounded-lg shadow-sm border overflow-hidden flex flex-col">
+            <!-- Messages Area -->
+            <div class="flex-1 overflow-y-auto p-6 space-y-4" x-ref="messagesContainer">
+                <!-- Welcome Message -->
+                <div class="text-center py-8" x-show="messages.length === 0">
+                    <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Welcome to Bengali-English RAG Chatbot</h3>
+                    <p class="text-gray-600 mb-4">Ask questions about your documents in Bengali or English</p>
+                    <div class="flex flex-wrap justify-center gap-2 text-sm">
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">Bengali • বাংলা</span>
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full">English</span>
+                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full">Translation • অনুবাদ</span>
+                    </div>
+                </div>
+
+                <!-- Messages -->
+                <template x-for="message in messages" :key="message.id">
+                    <div class="message-bubble" :class="message.type === 'user' ? 'flex justify-end' : 'flex justify-start'">
+                        <div :class="message.type === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-900'" class="max-w-3xl px-4 py-3 rounded-lg shadow-sm">
+                            <!-- User Message -->
+                            <div x-show="message.type === 'user'">
+                                <p class="whitespace-pre-wrap" x-text="message.content"></p>
+                                <div class="text-xs opacity-75 mt-1" x-text="message.timestamp"></div>
+                            </div>
+                            
+                            <!-- Bot Message -->
+                            <div x-show="message.type === 'bot'">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="whitespace-pre-wrap mb-3" x-html="message.content"></p>
+                                        
+                                        <!-- Translation Details -->
+                                        <div x-show="message.translationDetails" class="mt-3 p-3 bg-blue-50 rounded-lg text-sm">
+                                            <div class="font-semibold text-blue-800 mb-2">Translation Details</div>
+                                            <div class="space-y-1 text-blue-700">
+                                                <div>Original Language: <span class="font-medium" x-text="message.translationDetails?.query_language"></span></div>
+                                                <div x-show="message.translationDetails?.english_query !== message.translationDetails?.original_query">
+                                                    English Query: <span class="italic" x-text="message.translationDetails?.english_query"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Sources -->
+                                        <div x-show="message.sources && message.sources.length > 0" class="mt-3">
+                                            <details class="group">
+                                                <summary class="cursor-pointer text-sm font-medium text-gray-600 hover:text-gray-800 flex items-center space-x-2">
+                                                    <svg class="w-4 h-4 transform group-open:rotate-90 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                                    </svg>
+                                                    <span>Sources (<span x-text="message.sources.length"></span>)</span>
+                                                </summary>
+                                                <div class="mt-2 space-y-2">
+                                                    <template x-for="source in message.sources" :key="source.page">
+                                                        <div class="p-3 bg-gray-50 rounded-lg text-sm">
+                                                            <div class="font-medium text-gray-800" x-text="source.source"></div>
+                                                            <div class="text-gray-600">Page: <span x-text="source.page"></span></div>
+                                                            <div class="text-gray-600">Language: <span x-text="source.original_language"></span></div>
+                                                            <div class="mt-2 text-gray-700 italic" x-text="source.content_preview"></div>
+                                                        </div>
+                                                    </template>
+                                                </div>
+                                            </details>
+                                        </div>
+                                        
+                                        <div class="text-xs text-gray-500 mt-2" x-text="message.timestamp"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Typing Indicator -->
+                <div x-show="isTyping" class="flex justify-start">
+                    <div class="bg-gray-100 text-gray-900 max-w-xs px-4 py-3 rounded-lg shadow-sm">
+                        <div class="flex items-center space-x-2">
+                            <div class="loader"></div>
+                            <span class="text-sm typing-indicator">AI is thinking...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="border-t bg-gray-50 p-4">
+                <form @submit.prevent="sendMessage()" class="flex space-x-3">
+                    <div class="flex-1">
+                        <textarea 
+                            x-model="newMessage" 
+                            @keydown.enter.prevent="sendMessage()"
+                            placeholder="Ask a question in Bengali or English... বাংলা বা ইংরেজিতে প্রশ্ন করুন..."
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                            rows="2"
+                            :disabled="isTyping"
+                        ></textarea>
+                    </div>
+                    <button 
+                        type="submit" 
+                        :disabled="!newMessage.trim() || isTyping"
+                        class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                        <svg x-show="!isTyping" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                        </svg>
+                        <div x-show="isTyping" class="loader border-white border-t-transparent"></div>
+                    </button>
+                </form>
+                
+                <!-- Quick Actions -->
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <button @click="insertSample('অনুপমের বন্ধু হরিশ কোথায় কাজ করে?')" class="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors">
+                        Sample Bengali Question
+                    </button>
+                    <button @click="insertSample('Where does Anupam\'s friend Harish work?')" class="px-3 py-1 text-xs bg-green-100 text-green-700 rounded-full hover:bg-green-200 transition-colors">
+                        Sample English Question
+                    </button>
+                    <button @click="clearChat()" class="px-3 py-1 text-xs bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors">
+                        Clear Chat
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-sm text-gray-500">
+        <p>Bengali-English Translation Augmented RAG System • Powered by OpenAI & LangChain</p>
+    </footer>
+
+    <script>
+        function chatApp() {
+            return {
+                messages: [],
+                newMessage: '',
+                isTyping: false,
+                systemStatus: 'checking',
+                
+                init() {
+                    this.checkHealth();
+                    // Check health every 30 seconds
+                    setInterval(() => this.checkHealth(), 30000);
+                },
+                
+                async checkHealth() {
+                    try {
+                        const response = await fetch('/api/health');
+                        const data = await response.json();
+                        this.systemStatus = data.status === 'healthy' && data.rag_initialized ? 'healthy' : 'unhealthy';
+                    } catch (error) {
+                        console.error('Health check failed:', error);
+                        this.systemStatus = 'unhealthy';
+                    }
+                },
+                
+                async sendMessage() {
+                    if (!this.newMessage.trim() || this.isTyping) return;
+                    
+                    const userMessage = {
+                        id: Date.now(),
+                        type: 'user',
+                        content: this.newMessage.trim(),
+                        timestamp: new Date().toLocaleTimeString()
+                    };
+                    
+                    this.messages.push(userMessage);
+                    const questionText = this.newMessage.trim();
+                    this.newMessage = '';
+                    this.isTyping = true;
+                    
+                    this.$nextTick(() => {
+                        this.scrollToBottom();
+                    });
+                    
+                    try {
+                        const response = await fetch('/api/ask', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ 
+                                question: questionText,
+                                show_translation_details: true 
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            const botMessage = {
+                                id: Date.now() + 1,
+                                type: 'bot',
+                                content: data.answer,
+                                timestamp: new Date().toLocaleTimeString(),
+                                translationDetails: data.translation_details,
+                                sources: data.context
+                            };
+                            this.messages.push(botMessage);
+                        } else {
+                            const errorMessage = {
+                                id: Date.now() + 1,
+                                type: 'bot',
+                                content: `❌ Error: ${data.error}`,
+                                timestamp: new Date().toLocaleTimeString()
+                            };
+                            this.messages.push(errorMessage);
+                        }
+                    } catch (error) {
+                        console.error('Error sending message:', error);
+                        const errorMessage = {
+                            id: Date.now() + 1,
+                            type: 'bot',
+                            content: `❌ Network error: ${error.message}`,
+                            timestamp: new Date().toLocaleTimeString()
+                        };
+                        this.messages.push(errorMessage);
+                    } finally {
+                        this.isTyping = false;
+                        this.$nextTick(() => {
+                            this.scrollToBottom();
+                        });
+                    }
+                },
+                
+                insertSample(text) {
+                    this.newMessage = text;
+                },
+                
+                clearChat() {
+                    this.messages = [];
+                },
+                
+                scrollToBottom() {
+                    const container = this.$refs.messagesContainer;
+                    container.scrollTop = container.scrollHeight;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
