@@ -1,6 +1,13 @@
-# Bengali-English Translation Augmented RAG System
+# Bengali-English Translation Augmented RAG System Interview Assessment by 10 Minute School
 
-A multilingual Retrieval-Augmented Generation (RAG) system that enables users to query Bengali documents using both Bengali and English questions. The system uses OCR for text extraction, translation for multilingual support, and vector embeddings for semantic search.
+## AI Engineer (Level 1)
+
+!(logo)(https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/10_Minute_School_Logo.svg/1024px-10_Minute_School_Logo.svg.png)
+
+Author: Atanu Shuvam Roy
+Email: atanuroy911@gmail.com
+
+A multilingual Retrieval-Augmented Generation (RAG) system that enables users to query Bengali pdf using both Bengali and English questions. 
 
 ![Alt text](/images/1.png)
 
@@ -8,11 +15,13 @@ A multilingual Retrieval-Augmented Generation (RAG) system that enables users to
 The method implemented here does not quite process the document well. The PDF document mentioned here has lots of artifacts and the MCQ section is albeit visually appealing is not good for processing. What needs to be done is to have a Key Value pair for all questions and answers and then create the embeddings and then store them in the database. Which is not done in this short time span. While doing this assignment I have tested with LaBSE, Sentence Transformer MiniLLM V2 and Gemini Embeddings from Langchain. However all those models were not performing well at all. It should but, I believe the data was not making sense to the model due to the complexity of the text. For example, the main text of the PDF is in Shadhu Bhasha and advanced bengali corpus is used. However, us as normal human beings do not ask questions to LLM in that manner. Another point to note is in MCQs because there is no way to actually differentiate between correct and wrong answers the similarity will obviously be thrown off course. 
 
 Proper way of data cleaning:
+```
 {
     question: XYZ? ,
     answer: XYZ
     wrong answer: [a, b, c, d];
 }
+```
 
 If the data can be extracted in this manner then the model will be better.
 
@@ -486,4 +495,3 @@ POST /api/detect_language
 - Maintains good response quality across languages
 - Offers both web interface and programmatic API access
 
-This implementation demonstrates effective multilingual RAG capabilities with practical applications for cross-language document querying and information retrieval.
