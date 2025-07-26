@@ -146,9 +146,9 @@ Sources:
    Original Language: bengali
    Content Preview: After the marriage dissolution, Kalyani takes a vow of celibacy...
 ```
-![Alt text]('/images/2.png')
+![Alt text](/images/2.png)
 
-![Alt text]('/images/3.png')
+![Alt text](/images/3.png)
 ### English Queries
 
 **Query 1:**
