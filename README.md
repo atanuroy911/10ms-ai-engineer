@@ -437,34 +437,6 @@ POST /api/detect_language
    - Language-appropriate error messages
    - Suggestion of alternative query formulations
 
-## Evaluation and Performance
-
-### Relevance Assessment
-
-**Current Results Quality:** Good to Excellent
-
-**Evidence of Relevance:**
-- Bengali queries correctly identify specific characters and plot elements
-- English translations maintain semantic accuracy
-- Cross-language queries return consistent results
-- Source attribution provides verification capability
-
-**Sample Evaluation:**
-
-| Query Type | Language | Relevance Score | Response Quality |
-|------------|----------|----------------|------------------|
-| Character Location | Bengali | 9/10 | Excellent |
-| Plot Details | Bengali | 8/10 | Good |
-| Character Location | English | 9/10 | Excellent |
-| Theme Analysis | English | 7/10 | Good |
-
-### Performance Metrics
-
-**Translation Accuracy:** 85-90% (based on manual evaluation)
-**Retrieval Precision:** 80-85% (relevant documents in top-5)
-**Response Coherence:** 90-95% (grammatically correct and contextually appropriate)
-**Cross-language Consistency:** 80-85% (similar answers for equivalent queries)
-
 ### Potential Improvements
 
 **For Better Results:**
