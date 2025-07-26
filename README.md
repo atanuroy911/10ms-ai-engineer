@@ -2,7 +2,7 @@
 
 ## AI Engineer (Level 1)
 
-!(logo)(https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/10_Minute_School_Logo.svg/1024px-10_Minute_School_Logo.svg.png)
+![logo](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/10_Minute_School_Logo.svg/1024px-10_Minute_School_Logo.svg.png)
 
 Author: Atanu Shuvam Roy
 Email: atanuroy911@gmail.com
